@@ -1,10 +1,10 @@
 package com.hybrid.order.service;
 
 import com.hybrid.common.event.TransactionalEventPublisher;
+import com.hybrid.common.event.contract.OrderConfirmed;
+import com.hybrid.common.event.contract.OrderCreated;
 import com.hybrid.order.domain.Order;
 import com.hybrid.order.domain.OrderRepository;
-import com.hybrid.order.event.OrderConfirmed;
-import com.hybrid.order.event.OrderCreated;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,5 +33,11 @@ public class OrderService {
         Order o = repo.findById(orderId).orElseThrow();
         o.confirm();
         publisher.publish(new OrderConfirmed(orderId));
+    }
+
+    @Transactional
+    public Long createWithForcedRollback(CreateOrderCommand cmd) {
+        Long id = create(cmd);
+        throw new RuntimeException("forced rollback for test");
     }
 }
