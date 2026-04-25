@@ -1,0 +1,32 @@
+package com.hybrid.common.support;
+
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+@SpringBootTest
+@Testcontainers
+@Import(KafkaTestSupportConfig.class)   // KafkaProducerStub, KafkaTestConsumer 자동 등록
+public abstract class KafkaIntegrationTestBase {
+
+    @Container
+    static final PostgreSQLContainer<?> pg = new PostgreSQLContainer<>("postgres:17");
+
+    @Container
+    static final KafkaContainer kafka = new KafkaContainer(
+            DockerImageName.parse("confluentinc/cp-kafka:7.7.0"));
+
+    @DynamicPropertySource
+    static void props(DynamicPropertyRegistry r) {
+        r.add("spring.datasource.url", pg::getJdbcUrl);
+        r.add("spring.datasource.username", pg::getUsername);
+        r.add("spring.datasource.password", pg::getPassword);
+        r.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+    }
+}
