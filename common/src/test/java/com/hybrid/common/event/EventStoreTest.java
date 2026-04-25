@@ -14,6 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class EventStoreTest {
 
+    /** EventStore 단위 테스트 전용 더미 이벤트. 도메인 이벤트와 분리해 모듈 경계를 침해하지 않는다. */
+    record OrderCreatedTestEvent(String aggregateId) implements DomainEvent {
+        @Override public String eventType() { return "OrderCreatedTest"; }
+    }
+
     @Test
     void append한_이벤트는_read로_조회된다() {
         EventStore store = new InMemoryEventStore();
