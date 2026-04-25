@@ -12,6 +12,7 @@ import org.springframework.kafka.core.ProducerFactory;
  * - KafkaProducerStub: 운영 KafkaTemplate을 대체. 평소엔 진짜 컨테이너로 송신,
  *   테스트가 failNext/alwaysFail 호출 시 실패 시뮬레이션.
  * - KafkaTestConsumer: 테스트가 직접 토픽을 구독해 메시지를 검증.
+ * - KafkaTestProducer: 테스트가 직접 토픽으로 메시지를 발행 (외부에서 들어오는 입력 시뮬레이션).
  *
  * KafkaIntegrationTestBase가 @Import(KafkaTestSupportConfig.class)로 끌어들여
  * 모든 통합 테스트에서 자동 사용 가능.
@@ -35,5 +36,11 @@ public class KafkaTestSupportConfig {
     public KafkaTestConsumer kafkaTestConsumer(
             @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         return new KafkaTestConsumer(bootstrapServers);
+    }
+
+    @Bean
+    public KafkaTestProducer kafkaTestProducer(
+            @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+        return new KafkaTestProducer(bootstrapServers);
     }
 }
