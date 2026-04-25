@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: hybrid-event-driven
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hybrid
+    username: hybrid
+    password: hybrid
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification
+      auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+outbox:
+  relay:
+    poll-interval-ms: 1000
+    batch-size: 100
+    max-retry: 10
