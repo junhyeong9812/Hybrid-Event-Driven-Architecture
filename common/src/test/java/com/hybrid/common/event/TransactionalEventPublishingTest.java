@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.hybrid.common.event.EventStore;
 import com.hybrid.common.event.TransactionalEventPublisher;
-import com.hybrid.order.event.OrderCreated;
+import com.hybrid.common.event.contract.OrderCreated;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
