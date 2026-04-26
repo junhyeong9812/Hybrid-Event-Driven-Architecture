@@ -5,8 +5,12 @@ dependencies {
     implementation project(':order')
     implementation project(':payment')
     implementation project(':notification')
+
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // 실행 모듈은 운영 관측성을 명시적으로 선언 — 의존 추적성 위해 transitive 의존만으로 두지 않는다.
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation 'org.testcontainers:kafka:1.20.4'
