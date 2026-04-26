@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hybrid.common.event.InMemoryEventBus;
-import com.hybrid.order.event.OrderCreated;
+import com.hybrid.common.event.contract.OrderCreated;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
