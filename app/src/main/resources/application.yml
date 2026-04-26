@@ -27,3 +27,14 @@ outbox:
     poll-interval-ms: 1000
     batch-size: 100
     max-retry: 10
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      email:
+        failureRateThreshold: 50            # 실패율 50% 넘으면 OPEN
+        slidingWindowSize: 10               # 최근 10 호출을 평가 윈도우로
+        waitDurationInOpenState: 10s        # OPEN 상태 유지 시간 → 이후 HALF_OPEN
+        permittedNumberOfCallsInHalfOpenState: 3   # HALF_OPEN에서 시도할 호출 수
+        minimumNumberOfCalls: 5             # 윈도우에 최소 이만큼 차야 평가
+        automaticTransitionFromOpenToHalfOpenStateEnabled: true
