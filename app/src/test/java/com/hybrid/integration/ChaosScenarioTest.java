@@ -41,6 +41,9 @@ class ChaosScenarioTest extends KafkaIntegrationTestBase {
             ids.add(id);
         }
 
+        // 발행 차단 시뮬레이션 — KafkaContainer를 직접 stop/start하지 않는다.
+        // 컨테이너 재시작은 bootstrap URL 변경 / Spring 컨텍스트 캐시 영향 등 비결정 요소가 많다.
+        // KafkaProducerStub.alwaysFail은 "Kafka가 계속 실패한다"를 결정적으로 시뮬레이션한다.
         kafkaProducerStub.alwaysFail();
         Thread.sleep(5_000);
         kafkaProducerStub.reset();
