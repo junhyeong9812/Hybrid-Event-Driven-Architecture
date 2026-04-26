@@ -1,7 +1,6 @@
 package com.hybrid.common.outbox;
 
 import com.hybrid.common.support.KafkaIntegrationTestBase;
-import com.hybrid.notification.inbox.InboxConsumer;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
@@ -13,12 +12,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+/**
+ * common 모듈에서 다루는 outbox 메트릭만 검증한다.
+ * inbox.duplicate.count는 notification 모듈의 InboxConsumer가 발생시키므로
+ * 이 모듈에선 검증할 수 없음 — InboxConsumerMetricsTest(notification/test)로 분리.
+ */
 class OutboxMetricsTest extends KafkaIntegrationTestBase {
 
     @Autowired MeterRegistry registry;
     @Autowired OutboxRepository outboxRepo;
     @Autowired OutboxRelay relay;
-    @Autowired InboxConsumer inboxConsumer;
 
     @Test
     void outbox_pending_count_게이지가_PENDING_레코드_수를_반영한다() {
@@ -41,14 +44,5 @@ class OutboxMetricsTest extends KafkaIntegrationTestBase {
 
         assertThat(registry.counter("outbox.publish.success").count())
                 .isGreaterThan(v0);
-    }
-
-    @Test
-    void inbox_duplicate_count_카운터가_중복_수신_시_증가한다() {
-        inboxConsumer.consume("msg-1","OrderConfirmed","{}");
-        inboxConsumer.consume("msg-1","OrderConfirmed","{}");
-
-        assertThat(registry.counter("inbox.duplicate.count").count())
-                .isEqualTo(1.0);
     }
 }
