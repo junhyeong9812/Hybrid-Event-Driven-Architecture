@@ -35,8 +35,10 @@ public class OutboxRelay {
     @Scheduled(fixedDelay = 1000)
     @Transactional
     public void poll() {
-        List<OutboxEvent> pending =
-                repo.findTop100ByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
+        // Phase 3: 멀티 인스턴스 안전성을 위해 행 잠금 기반 fetch.
+        // FOR UPDATE SKIP LOCKED로 다른 노드가 잡은 행은 건너뜀 → 같은 행이 두 노드에서 동시 발행되지 않음.
+        // @Transactional 종료(커밋/롤백) 시점에 행 잠금이 자동 해제됨.
+        List<OutboxEvent> pending = repo.lockPending(BATCH);
 
         for (OutboxEvent e : pending) {
             try {
