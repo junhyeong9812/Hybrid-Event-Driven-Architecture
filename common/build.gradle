@@ -1,3 +1,7 @@
+plugins {
+    id 'java-test-fixtures'
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -8,6 +12,19 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.postgresql:postgresql'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // 테스트 픽스처 — 다른 모듈의 testImplementation testFixtures(project(':common'))로 노출.
+    // testFixtures의 공용 API에 등장하는 타입은 testFixturesApi로 명시해야 한다.
+    //   - KafkaProducerStub extends KafkaTemplate, 생성자에 ProducerFactory → spring-kafka
+    //   - KafkaTestConsumer가 KafkaConsumer/ConsumerRecord 노출 → kafka-clients
+    //   - KafkaIntegrationTestBase가 @SpringBootTest 사용 → spring-boot-starter-test
+    //   - PostgreSQLContainer / KafkaContainer 노출 → testcontainers 모듈들
+    testFixturesApi 'org.springframework.boot:spring-boot-starter-test'
+    testFixturesApi 'org.springframework.kafka:spring-kafka'
+    testFixturesApi 'org.apache.kafka:kafka-clients'
+    testFixturesApi 'org.testcontainers:junit-jupiter:1.20.4'
+    testFixturesApi 'org.testcontainers:postgresql:1.20.4'
+    testFixturesApi 'org.testcontainers:kafka:1.20.4'
 
     testImplementation 'org.testcontainers:kafka:1.20.4'
 }
